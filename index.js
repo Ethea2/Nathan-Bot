@@ -3,8 +3,25 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
+const { DisTube } = require("distube");
+const { SpotifyPlugin } = require("@distube/spotify");
+const { SoundCloudPlugin } = require("@distube/soundcloud");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates
+        // Intents.FLAGS.GUILD_MESSAGES,
+        // Intents.FLAGS.GUILDS,
+        // Intents.FLAGS.GUILD_MEMBERS,
+    ]
+});
+
+client.config = require('./config.js');
 
 client.once(Events.ClientReady, c => {
     console.log(`Logged in as ${c.user.tag}`);
@@ -41,7 +58,7 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     try {
-        await command.execute(interaction);
+        await command.execute({client, interaction});
     } catch (error) {
         console.error(error);
         if (interaction.replied || interaction.deferred) {
@@ -52,6 +69,24 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
+client.distube = new DisTube(client, {
+    leaveOnEmpty: false,
+    leaveOnFinish: false,
+    leaveOnStop: false,
+    emitNewSongOnly: true,
+    emitAddSongWhenCreatingQueue: false,
+    emitAddListWhenCreatingQueue: false,
+    nsfw: true, // depends on you if you want to play nsfw content or not. if you don't want to play set it to false
+    plugins: [
+      new SpotifyPlugin({
+        emitEventsAfterFetching: true,
+      }),
+      new SoundCloudPlugin(),
+      new YtDlpPlugin({
+        update: false,
+      }),
+    ],
+  });
 
 client.login(process.env.BOT_TOKEN);
 
