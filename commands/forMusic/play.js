@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
+const { Playlist } = require('distube');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,16 +24,17 @@ module.exports = {
 
             client.distube.search(message)
                 .then((result) => {
-                    if (result.length === 0) return interaction.editReply("No result found!");
+                    if (result.length === 0) return interaction.editReply(":x: No result found! :x:");
+
                     const userQuery = result[0];
                     embed
                         .setTitle(`${userQuery.name}`)
                         .setColor(0x00AE86)
                         .setImage(`${userQuery.thumbnail}`)
-                        .setDescription(`The song has been added to the queue successfully!\nRequested by: <@${interaction.user.tag}>`)
+                        .setDescription(`The song has been added to the queue successfully!\nRequested by: <@${interaction.user.id}>`)
                         .setTimestamp()
                     interaction.editReply({ embeds: [embed] });
-                    client.distube.play(voice, message, {
+                    client.distube.play(voice, userQuery, {
                         textChannel: interaction.channel,
                         member: interaction.member,
                         interaction,
