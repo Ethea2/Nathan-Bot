@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
 const { Playlist } = require('distube');
+const { natPics } = require('../../utils/nathanpics')
+const { getRandomElement } = require('../../utils/helperFuncs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +10,7 @@ module.exports = {
         .addStringOption(option => {
             return option
                 .setName("query")
-                .setDescription("The youtube song link you want me to sing!")
+                .setDescription("The song you want me to sing!")
                 .setRequired(true)
         }),
     async execute({ client, interaction }) {
@@ -41,11 +43,19 @@ module.exports = {
                     });
                 })
                 .catch((err) => {
-                    interaction.editReply("There was an error!")
+                    embed
+                        .setTitle('I could not find what you were looking for!')
+                        .setDescription('If you sent a link try using the `/playlink` command instead')
+                        .setImage(getRandomElement(natPics.sad))
+                    interaction.editReply({ embeds: [embed] })
                     console.log(err)
                 });
 
         } catch (error) {
+            embed
+                .setTitle('There was an error')
+                .setImage(getRandomElement(natPics.sad))
+            await interaction.editReply({ embeds: [embed] })
             console.log(error);
         }
     }

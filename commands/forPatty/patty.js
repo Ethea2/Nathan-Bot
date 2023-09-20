@@ -8,7 +8,7 @@ module.exports = {
     async execute({ client, interaction }) {
         try {
             if (interaction.member.voice.channel === null) return await interaction.reply("Please join a voice channel!!"); // it will check if user is in voice channel or not
-
+            if (interaction.member.id !== "824669920938819666") return await interaction.reply("You are not my overlord!!");
             await interaction.deferReply();
             //let embed = new EmbedBuilder()
             //    voice channel where member is join in.
@@ -35,7 +35,7 @@ module.exports = {
                 "https://www.youtube.com/watch?v=0R54VbaU7P4",
                 "https://www.youtube.com/watch?v=8LDOUFJVNmg",
                 "https://www.youtube.com/watch?v=PedACuLiMxU",
-                "https://www.youtube.com/watch?v=hXzPxBhhmY8&t=11s"
+                "https://www.youtube.com/watch?v=hXzPxBhhmY8"
             ]
 
             const playlist = await client.distube.createCustomPlaylist(specialPlaylist, {

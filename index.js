@@ -2,11 +2,13 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-
+const { EmbedBuilder } = require('@discordjs/builders')
 const { DisTube } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
+const { natPics } = require('./utils/nathanpics')
+const { getRandomElement } = require('./utils/helperFuncs')
 
 
 const client = new Client({
@@ -58,13 +60,17 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     try {
-        await command.execute({client, interaction});
+        await command.execute({ client, interaction });
     } catch (error) {
+        const embed = new EmbedBuilder()
+            .setTitle('There was an error while excecuting this command!')
+            .setImage(getRandomElement(natPics.sad))
+            .setTimestamp()
         console.error(error);
         if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.followUp({ embeds: [embed], ephemeral: true });
         } else {
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.reply({ embeds: [embed], ephemeral: true });
         }
     }
 });
@@ -78,15 +84,15 @@ client.distube = new DisTube(client, {
     emitAddListWhenCreatingQueue: false,
     nsfw: true, // depends on you if you want to play nsfw content or not. if you don't want to play set it to false
     plugins: [
-      new SpotifyPlugin({
-        emitEventsAfterFetching: true,
-      }),
-      new SoundCloudPlugin(),
-      new YtDlpPlugin({
-        update: false,
-      }),
+        new SpotifyPlugin({
+            emitEventsAfterFetching: true,
+        }),
+        new SoundCloudPlugin(),
+        new YtDlpPlugin({
+            update: false,
+        }),
     ],
-  });
+});
 
 client.login(process.env.BOT_TOKEN);
 
