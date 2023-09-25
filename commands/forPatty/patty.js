@@ -7,8 +7,8 @@ module.exports = {
 
     async execute({ client, interaction }) {
         try {
+            if (interaction.member.id !== process.env.PATTY_ID) return await interaction.reply("You are not my overlord!!");
             if (interaction.member.voice.channel === null) return await interaction.reply("Please join a voice channel!!"); // it will check if user is in voice channel or not
-            if (interaction.member.id !== "824669920938819666") return await interaction.reply("You are not my overlord!!");
             await interaction.deferReply();
             //let embed = new EmbedBuilder()
             //    voice channel where member is join in.

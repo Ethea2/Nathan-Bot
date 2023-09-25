@@ -24,7 +24,7 @@ module.exports = {
             client.distube.setVolume(interaction.guild, volume)
 
             const embed = new EmbedBuilder()
-                .setTitle('The queue was shuffled!')
+                .setTitle('The volume has been set to `' + volume + '`')
                 .setDescription(`As requested by <@${interaction.member.id}>`)
                 .setImage(getRandomElement(natPics.happy))
                 .setTimestamp()

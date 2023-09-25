@@ -8,7 +8,10 @@ const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
 const { natPics } = require('./utils/nathanpics')
-const { getRandomElement } = require('./utils/helperFuncs')
+const { getRandomElement } = require('./utils/helperFuncs');
+const { default: mongoose } = require('mongoose');
+const { getTodosToday } = require('./utils/todoFuncs')
+const cron = require('cron')
 
 
 const client = new Client({
@@ -75,6 +78,27 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
+client.on("ready", async () => {
+    mongoose.connect(process.env.MONGODB_URI)
+    const user = await client.users.fetch(process.env.PATTY_ID).catch(() => null);
+
+    let scheduledMessage = new cron.CronJob('00 00 04 * * *', () => {
+        try {
+            getTodosToday()
+                .then(res => {
+                    user.send(res).catch((e) => {
+                        console.log(e)
+                    });
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }, null, true, 'Asia/Singapore')
+    
+    scheduledMessage.start()
+    console.log("connected to mongodb")
+})
+
 client.distube = new DisTube(client, {
     leaveOnEmpty: false,
     leaveOnFinish: false,
@@ -95,5 +119,3 @@ client.distube = new DisTube(client, {
 });
 
 client.login(process.env.BOT_TOKEN);
-
-

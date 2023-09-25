@@ -1,5 +1,7 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
 const { RepeatMode } = require('distube');
+const { natPics } = require('../../utils/nathanpics')
+const { getRandomElement } = require('../../utils/helperFuncs')
 
 module.exports = {
     data: new SlashCommandBuilder()
