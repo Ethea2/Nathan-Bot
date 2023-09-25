@@ -22,6 +22,7 @@ module.exports = {
 
     async execute({ client, interaction }) {
         try {
+            if (interaction.member.id !== process.env.PATTY_ID) return await interaction.reply("You are not my overlord!!");
             await interaction.deferReply()
             const what = interaction.options.get('what').value
             let when = interaction.options.get('when')?.value
